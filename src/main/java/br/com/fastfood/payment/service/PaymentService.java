@@ -1,6 +1,7 @@
 package br.com.fastfood.payment.service;
 
 import br.com.fastfood.payment.dto.PaymentDto;
+import br.com.fastfood.payment.http.OrderClient;
 import br.com.fastfood.payment.model.Payment;
 import br.com.fastfood.payment.model.Status;
 import br.com.fastfood.payment.repository.PaymentRepository;
@@ -11,11 +12,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class PaymentService {
 
     @Autowired
     PaymentRepository repository;
+
+    @Autowired
+    OrderClient orderClient;
 
     @Autowired
     ModelMapper mapper;
@@ -51,5 +57,17 @@ public class PaymentService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public void confirmePayment(Long id) {
+        Optional<Payment> payment = repository.findById(id);
+
+        if(!payment.isPresent()) {
+            throw new EntityNotFoundException();
+        }
+
+        payment.get().setStatus(Status.CONFIRMED);
+        repository.save(payment.get());
+        orderClient.updatePayment(payment.get().getOrderId());
     }
 }
