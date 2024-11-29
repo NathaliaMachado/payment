@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @FeignClient("order")
 public interface OrderClient {
 
-    @RequestMapping(method = RequestMethod.PUT, value = "orders/{id}/paid")
+    @RequestMapping(method = RequestMethod.PUT, value = "/orders/{id}/paid")
     void updatePayment(@PathVariable Long id);
 }
