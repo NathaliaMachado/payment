@@ -1,3 +1,4 @@
+br/com/fastfood/payment/http/OrderClient.class
 br/com/fastfood/payment/service/PaymentService.class
 br/com/fastfood/payment/config/Beans.class
 br/com/fastfood/payment/dto/PaymentDto.class

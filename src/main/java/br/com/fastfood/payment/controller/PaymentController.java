@@ -2,6 +2,7 @@ package br.com.fastfood.payment.controller;
 
 import br.com.fastfood.payment.dto.PaymentDto;
 import br.com.fastfood.payment.service.PaymentService;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,13 @@ public class PaymentController {
     }
 
     @PatchMapping("/{id}/confirmed")
+    @CircuitBreaker(name = "updatePayment", fallbackMethod = "authorizedPaymentWithPendingIntegration")
     public void confirmePayment(@PathVariable @NotNull Long id) {
         service.confirmePayment(id);
+    }
+
+    public void authorizedPaymentWithPendingIntegration(Long id, Exception exception) {
+        service.updateStatus(id);
     }
 
 }
